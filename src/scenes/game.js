@@ -12,6 +12,7 @@ export default class Game extends Phaser.Scene {
   preload() {
     this.load.image("bg", "src/assets/bg.jpg");
     this.load.image("cat", "src/assets/neko.jpeg");
+    // this.load.audio("bell", "src/assets/bell.wav");
   }
 
   create() {
@@ -60,6 +61,26 @@ export default class Game extends Phaser.Scene {
           playerCat.render(80, 100 + i * 100, "cat");
         }
       };
+      const meow = () => {
+        const audioContext = new AudioContext();
+        const osc = audioContext.createOscillator();
+        osc.type = "triangle";
+        osc.frequency.value = 350;
+        osc.frequency.exponentialRampToValueAtTime(
+          600,
+          audioContext.currentTime + 1
+        );
+        const gain = audioContext.createGain();
+        gain.gain.exponentialRampToValueAtTime(
+          0.001,
+          audioContext.currentTime + 0.9
+        );
+
+        osc.start();
+        osc.stop(audioContext.currentTime + 1);
+        osc.connect(gain).connect(audioContext.destination);
+      };
+      meow();
     };
 
     this.dealCatText.on("pointerdown", function () {
@@ -96,6 +117,27 @@ export default class Game extends Phaser.Scene {
       dropZone.data.values.cats++;
       gameObject.x = dropZone.x;
       gameObject.y = dropZone.y;
+
+      const meow = () => {
+        const audioContext = new AudioContext();
+        const osc = audioContext.createOscillator();
+        osc.type = "triangle";
+        osc.frequency.value = 350;
+        osc.frequency.exponentialRampToValueAtTime(
+          600,
+          audioContext.currentTime + 1
+        );
+        const gain = audioContext.createGain();
+        gain.gain.exponentialRampToValueAtTime(
+          0.001,
+          audioContext.currentTime + 0.9
+        );
+
+        osc.start();
+        osc.stop(audioContext.currentTime + 1);
+        osc.connect(gain).connect(audioContext.destination);
+      };
+      meow();
     });
   }
 
