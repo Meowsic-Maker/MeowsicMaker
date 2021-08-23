@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Cat from "../helpers/cat";
 import Zone from "../helpers/zone";
+import * as Tone from "tone";
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -12,7 +13,8 @@ export default class Game extends Phaser.Scene {
   preload() {
     this.load.image("bg", "src/assets/bg.jpg");
     this.load.image("cat", "src/assets/neko.jpeg");
-    // this.load.audio("bell", "src/assets/bell.wav");
+    this.load.audio("meow", "src/assets/meow.mp3");
+    this.load.audio("bell", "src/assets/bell.mp3");
   }
 
   create() {
@@ -61,26 +63,8 @@ export default class Game extends Phaser.Scene {
           playerCat.render(80, 100 + i * 100, "cat");
         }
       };
-      const meow = () => {
-        const audioContext = new AudioContext();
-        const osc = audioContext.createOscillator();
-        osc.type = "triangle";
-        osc.frequency.value = 350;
-        osc.frequency.exponentialRampToValueAtTime(
-          600,
-          audioContext.currentTime + 1
-        );
-        const gain = audioContext.createGain();
-        gain.gain.exponentialRampToValueAtTime(
-          0.001,
-          audioContext.currentTime + 0.9
-        );
-
-        osc.start();
-        osc.stop(audioContext.currentTime + 1);
-        osc.connect(gain).connect(audioContext.destination);
-      };
-      meow();
+      const bell = new Tone.Player("src/assets/bell.mp3").toDestination();
+      bell.autostart = true;
     };
 
     this.dealCatText.on("pointerdown", function () {
@@ -118,26 +102,14 @@ export default class Game extends Phaser.Scene {
       gameObject.x = dropZone.x;
       gameObject.y = dropZone.y;
 
-      const meow = () => {
-        const audioContext = new AudioContext();
-        const osc = audioContext.createOscillator();
-        osc.type = "triangle";
-        osc.frequency.value = 350;
-        osc.frequency.exponentialRampToValueAtTime(
-          600,
-          audioContext.currentTime + 1
-        );
-        const gain = audioContext.createGain();
-        gain.gain.exponentialRampToValueAtTime(
-          0.001,
-          audioContext.currentTime + 0.9
-        );
-
-        osc.start();
-        osc.stop(audioContext.currentTime + 1);
-        osc.connect(gain).connect(audioContext.destination);
-      };
-      meow();
+      const player = new Tone.Player("src/assets/meow.mp3").toDestination();
+      Tone.loaded().then(() => {
+        const loopA = new Tone.Loop((time) => {
+          player.start();
+        }, "1n").start(0);
+        Tone.Transport.start();
+        Tone.Transport.stop(+10);
+      });
     });
   }
 
