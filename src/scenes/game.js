@@ -28,6 +28,10 @@ export default class Game extends Phaser.Scene {
       .setColor("#00ffff")
       .setInteractive();
 
+    this.menuZone = new Zone(this);
+    this.menuDropZone = this.menuZone.renderZone(80, 390, 120, 660);
+    this.menuOutline = this.menuZone.renderOutline(this.menuDropZone);
+
     this.zone1 = new Zone(this);
     this.dropZone1 = this.zone1.renderZone(645, 480, 210, 360);
     this.outline1 = this.zone1.renderOutline(this.dropZone1);
@@ -62,7 +66,7 @@ export default class Game extends Phaser.Scene {
       this.dealCats = () => {
         for (let i = 0; i < 7; i++) {
           let playerCat = new Cat(this);
-          playerCat.render(80, 100 + i * 100, "cat");
+          playerCat.render(80, 120 + i * 90, "cat");
           playerCat.name = "Cat " + (i + 1);
           this.cats.push(playerCat);
           console.log("playerCat", playerCat);
