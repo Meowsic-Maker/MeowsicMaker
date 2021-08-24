@@ -1,10 +1,10 @@
-export default class Zone {
+export default class Menu {
   constructor(scene) {
     this.renderZone = (x, y, width, height) => {
       let dropZone = scene.add
         .zone(x, y, width, height)
         .setRectangleDropZone(width, height);
-      dropZone.setData({ cats: false, isMenu: false });
+      dropZone.setData({ isMenu: true });
       return dropZone;
     };
     this.renderOutline = (dropZone) => {
