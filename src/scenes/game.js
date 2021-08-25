@@ -15,10 +15,12 @@ export default class Game extends Phaser.Scene {
   preload() {
     this.load.image("bg", "src/assets/bg.jpg");
     this.load.image("cat", "src/assets/neko.jpeg");
-    this.load.image("button1", "src/assets/greyneko.png");
+    this.load.image("button1", "src/assets/latteneko.png");
     this.load.image("button2", "src/assets/caliconeko.png");
-    this.load.image("button3", "src/assets/coffeeneko.png");
+    this.load.image("button3", "src/assets/greyneko.png");
     this.load.image("button4", "src/assets/kuroneko.png");
+    this.load.image("button5", "src/assets/sleepyneko.png");
+    this.load.image("button6", "src/assets/coffeeneko.png");
     this.load.audio("meow", "src/assets/meow.mp3");
     this.load.audio("bell", "src/assets/bell.mp3");
   }
@@ -88,7 +90,32 @@ export default class Game extends Phaser.Scene {
 
     this.gameButton1 = this.add
       .sprite(80, 120, "button1")
-      .setScale(0.6, 0.6)
+      .setDisplaySize(90, 80)
+      .setInteractive();
+
+    this.gameButton2 = this.add
+      .sprite(80, 220, "button2")
+      .setDisplaySize(90, 80)
+      .setInteractive();
+
+    this.gameButton3 = this.add
+      .sprite(80, 320, "button3")
+      .setDisplaySize(90, 80)
+      .setInteractive();
+
+    this.gameButton4 = this.add
+      .sprite(80, 420, "button4")
+      .setDisplaySize(90, 80)
+      .setInteractive();
+
+    this.gameButton5 = this.add
+      .sprite(80, 520, "button5")
+      .setDisplaySize(90, 80)
+      .setInteractive();
+
+    this.gameButton6 = this.add
+      .sprite(80, 620, "button6")
+      .setDisplaySize(90, 80)
       .setInteractive();
 
     this.cats = [];
