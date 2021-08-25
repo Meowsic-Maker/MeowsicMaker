@@ -158,17 +158,15 @@ export default class Game extends Phaser.Scene {
         dropZone.data.values.cats = true;
         console.log(gameObject);
 
-        const meowSound = new Tone.Player(
-          "src/assets/meow.mp3"
-        ).toDestination();
+        const player = new Tone.Player("src/assets/meow.mp3").toDestination();
         Tone.loaded().then(() => {
           const loop = new Tone.Loop((time) => {
-            meowSound.start();
+            player.start();
           }, "1n").start(0);
 
           Tone.Transport.bpm.value = 80;
           Tone.Transport.start();
-          // Tone.Transport.stop(+30);
+          Tone.Transport.stop(+30);
         });
       } else {
         gameObject.x = gameObject.input.dragStartX;
