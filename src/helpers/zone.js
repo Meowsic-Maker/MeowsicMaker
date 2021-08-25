@@ -4,7 +4,7 @@ export default class Zone {
       let dropZone = scene.add
         .zone(x, y, width, height)
         .setRectangleDropZone(width, height);
-      dropZone.setData({ cats: false, isMenu: false });
+      dropZone.setData({ occupied: false, isMenu: false });
       return dropZone;
     };
     this.renderOutline = (dropZone) => {

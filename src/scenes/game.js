@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import Cat from "../helpers/cat";
-// import CatIcon from "../helpers/buttons";
+import Cat1 from "../helpers/cat1";
+import Cat2 from "../helpers/cat2";
 import Menu from "../helpers/menu";
 import Zone from "../helpers/zone";
 import * as Tone from "tone";
@@ -14,13 +14,15 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     this.load.image("bg", "src/assets/bg.jpg");
-    this.load.image("cat", "src/assets/neko.jpeg");
+    this.load.image("cat", "src/assets/happyneko.png");
+    this.load.image("cat2", "src/assets/neko.jpeg");
     this.load.image("button1", "src/assets/latteneko.png");
     this.load.image("button2", "src/assets/caliconeko.png");
     this.load.image("button3", "src/assets/greyneko.png");
     this.load.image("button4", "src/assets/kuroneko.png");
     this.load.image("button5", "src/assets/sleepyneko.png");
     this.load.image("button6", "src/assets/coffeeneko.png");
+    this.load.audio("bossanova", "src/assets/bossa-nova-bass.wav");
     this.load.audio("meow", "src/assets/meow.mp3");
     this.load.audio("bell", "src/assets/bell.mp3");
   }
@@ -28,6 +30,11 @@ export default class Game extends Phaser.Scene {
   create() {
     this.add.image(640, 390, "bg").setScale(0.4, 0.4);
     let self = this;
+
+    const bellSound = () => {
+      const bell = new Tone.Player("src/assets/bell.mp3").toDestination();
+      bell.autostart = true;
+    };
 
     const getCatSound = () => {
       const audioContext = new AudioContext();
@@ -43,18 +50,10 @@ export default class Game extends Phaser.Scene {
         0.001,
         audioContext.currentTime + 0.9
       );
-
       osc.start();
       osc.stop(audioContext.currentTime + 1);
       osc.connect(gain).connect(audioContext.destination);
     };
-
-    // this.dealCatText = this.add
-    //   .text(50, 20, ["CATS"])
-    //   .setFontSize(18)
-    //   .setFontFamily("Trebuchet MS")
-    //   .setColor("#00ffff")
-    //   .setInteractive();
 
     this.menuZone = new Menu(this);
     this.menuDropZone = this.menuZone.renderZone(80, 390, 120, 660);
@@ -148,11 +147,20 @@ export default class Game extends Phaser.Scene {
     this.gameButton1.on(
       "pointerdown",
       function (pointer) {
-        getCatSound();
-        let playerCat = new Cat(this);
+        bellSound();
+        let playerCat = new Cat1(this);
         playerCat.render(80, 120, "cat");
         playerCat.name = "Cat 1";
-        console.log(this.gameButton1.x, this.gameButton1.y);
+      }.bind(this)
+    );
+
+    this.gameButton2.on(
+      "pointerdown",
+      function (pointer) {
+        bellSound();
+        let playerCat2 = new Cat2(this);
+        playerCat2.render(80, 220, "cat2");
+        playerCat2.name = "Cat 2";
       }.bind(this)
     );
 
@@ -177,24 +185,24 @@ export default class Game extends Phaser.Scene {
 
     this.input.on("drop", function (pointer, gameObject, dropZone) {
       if (dropZone.data.values.isMenu) {
+        gameObject.data.values.dropZones.forEach(
+          (zone) => (zone.data.values.occupied = false)
+        );
+        gameObject.data.values.soundOn = false;
+        console.log(gameObject.data.values.soundOn);
         gameObject.destroy();
-        Tone.Transport.stop();
-      } else if (!dropZone.data.values.cats) {
+      } else if (!dropZone.data.values.occupied) {
         gameObject.x = dropZone.x;
         gameObject.y = dropZone.y;
-        dropZone.data.values.cats = true;
-        console.log(gameObject);
-
-        const player = new Tone.Player("src/assets/meow.mp3").toDestination();
-        Tone.loaded().then(() => {
-          const loop = new Tone.Loop((time) => {
-            player.start();
-          }, "1n").start(0);
-
-          Tone.Transport.bpm.value = 80;
-          Tone.Transport.start();
-          Tone.Transport.stop(+30);
-        });
+        dropZone.data.values.occupied = true;
+        if (gameObject.data.values.dropZones.length !== 0) {
+          gameObject.data.values.dropZones.forEach(
+            (zone) => (zone.data.values.occupied = false)
+          );
+        }
+        gameObject.data.values.dropZones.push(dropZone);
+        gameObject.data.values.soundOn = true;
+        gameObject.data.values.meow();
       } else {
         gameObject.x = gameObject.input.dragStartX;
         gameObject.y = gameObject.input.dragStartY;
