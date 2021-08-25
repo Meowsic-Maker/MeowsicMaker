@@ -36,6 +36,15 @@ export default class Game extends Phaser.Scene {
       bell.autostart = true;
     };
 
+    const soundTrack = () => {
+      const accompaniment = new Tone.Player(
+        "src/assets/bossa-nova-bass.wav"
+      ).toDestination();
+      accompaniment.autostart = true;
+      accompaniment.loop = true;
+    };
+    soundTrack();
+
     const getCatSound = () => {
       const audioContext = new AudioContext();
       const osc = audioContext.createOscillator();
