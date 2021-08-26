@@ -7,27 +7,19 @@ export default class Cat {
         .image(x, y, sprite)
         .setDisplaySize(90, 80)
         .setInteractive();
+
       cat.setData({
         soundOn: false,
         music: "src/assets/bell.mp3",
         dropZones: [],
+        meowSounds: [],
         meow() {
-          console.log("meowed!");
           const meowSound = new Tone.Player(this.music).toDestination();
-          const playSound = (sound) => {
-            Tone.loaded().then(() => {
-              const loop = new Tone.Loop((time) => {
-                meowSound.start();
-              }, "1n").start(0);
-
-              Tone.Transport.bpm.value = 80;
-              Tone.Transport.start();
-              // Tone.Transport.stop(+30);
-            });
-          };
-          if (this.soundOn) {
-            playSound(meowSound);
-          }
+          this.meowSounds.push(meowSound);
+          Tone.loaded().then(() => {
+            meowSound.start();
+            meowSound.loop = true;
+          });
         },
       });
       scene.input.setDraggable(cat);

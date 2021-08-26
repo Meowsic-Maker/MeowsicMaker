@@ -40,6 +40,7 @@ export default class Game extends Phaser.Scene {
       const accompaniment = new Tone.Player(
         "src/assets/bossa-nova-bass.wav"
       ).toDestination();
+      accompaniment.volume.value = -5;
       accompaniment.autostart = true;
       accompaniment.loop = true;
     };
@@ -128,31 +129,6 @@ export default class Game extends Phaser.Scene {
 
     this.cats = [];
 
-    // this.dealCats = () => {
-    //   for (let i = 0; i < 7; i++) {
-    //     let playerCat = new Cat(this);
-    //     playerCat.render(80, 120 + i * 90, "cat");
-    //     playerCat.name = "Cat " + (i + 1);
-    //     this.cats.push(playerCat);
-    //     console.log("playerCat", playerCat);
-    //     console.log("this.cats", this.cats);
-    //   }
-    // };
-
-    // this.dealCatText.on("pointerdown", function () {
-    //   const bell = new Tone.Player("src/assets/bell.mp3").toDestination();
-    //   bell.autostart = true;
-    //   self.dealCats();
-    // });
-
-    // this.dealCatText.on("pointerover", function () {
-    //   self.dealCatText.setColor("#ff69b4");
-    // });
-
-    // this.dealCatText.on("pointerout", function () {
-    //   self.dealCatText.setColor("#00ffff");
-    // });
-
     this.gameButton1.on(
       "pointerdown",
       function (pointer) {
@@ -198,7 +174,10 @@ export default class Game extends Phaser.Scene {
           (zone) => (zone.data.values.occupied = false)
         );
         gameObject.data.values.soundOn = false;
-        console.log(gameObject.data.values.soundOn);
+        console.log("meowsounds", gameObject.data.values.meowSounds[0]);
+        gameObject.data.values.meowSounds[0].stop();
+        console.log("soundOn", gameObject.data.values.soundOn);
+        console.log("gameobj", gameObject.data);
         gameObject.destroy();
       } else if (!dropZone.data.values.occupied) {
         gameObject.x = dropZone.x;
@@ -211,7 +190,11 @@ export default class Game extends Phaser.Scene {
         }
         gameObject.data.values.dropZones.push(dropZone);
         gameObject.data.values.soundOn = true;
-        gameObject.data.values.meow();
+        if (gameObject.data.values.dropZones.length <= 1) {
+          gameObject.data.values.meow();
+        }
+        console.log("meowsounds", gameObject.data.values.meowSounds);
+        console.log("gameobj", gameObject.data);
       } else {
         gameObject.x = gameObject.input.dragStartX;
         gameObject.y = gameObject.input.dragStartY;
