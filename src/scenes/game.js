@@ -31,11 +31,7 @@ export default class Game extends Phaser.Scene {
     this.add.image(640, 390, "bg").setScale(0.4, 0.4);
     let self = this;
 
-    const bellSound = () => {
-      const bell = new Tone.Player("src/assets/bell.mp3").toDestination();
-      bell.autostart = true;
-    };
-
+    // sound effects
     const soundTrack = () => {
       const accompaniment = new Tone.Player(
         "src/assets/bossa-nova-bass.wav"
@@ -45,6 +41,11 @@ export default class Game extends Phaser.Scene {
       accompaniment.loop = true;
     };
     soundTrack();
+
+    const bellSound = () => {
+      const bell = new Tone.Player("src/assets/bell.mp3").toDestination();
+      bell.autostart = true;
+    };
 
     const getCatSound = () => {
       const audioContext = new AudioContext();
@@ -65,6 +66,7 @@ export default class Game extends Phaser.Scene {
       osc.connect(gain).connect(audioContext.destination);
     };
 
+    // render zones
     this.menuZone = new Menu(this);
     this.menuDropZone = this.menuZone.renderZone(80, 390, 120, 660);
     this.menuOutline = this.menuZone.renderOutline(this.menuDropZone);
@@ -97,6 +99,7 @@ export default class Game extends Phaser.Scene {
     this.dropZone7 = this.zone7.renderZone(920, 440, 220, 140);
     this.outline7 = this.zone7.renderOutline(this.dropZone7);
 
+    // render cat menu buttons
     this.gameButton1 = this.add
       .sprite(80, 120, "button1")
       .setDisplaySize(90, 80)
@@ -127,8 +130,7 @@ export default class Game extends Phaser.Scene {
       .setDisplaySize(90, 80)
       .setInteractive();
 
-    this.cats = [];
-
+    // render new cats from menu buttons
     this.gameButton1.on(
       "pointerdown",
       function (pointer) {
@@ -169,32 +171,36 @@ export default class Game extends Phaser.Scene {
     });
 
     this.input.on("drop", function (pointer, gameObject, dropZone) {
+      // if cat is dropped back in menu
       if (dropZone.data.values.isMenu) {
+        // reset all previously occupied zones
         gameObject.data.values.dropZones.forEach(
           (zone) => (zone.data.values.occupied = false)
         );
         gameObject.data.values.soundOn = false;
-        console.log("meowsounds", gameObject.data.values.meowSounds[0]);
+        // stop meow
         gameObject.data.values.meowSounds[0].stop();
-        console.log("soundOn", gameObject.data.values.soundOn);
-        console.log("gameobj", gameObject.data);
+        // remove cat
         gameObject.destroy();
       } else if (!dropZone.data.values.occupied) {
+        // if cat is dropped in any other zone, snap into place
         gameObject.x = dropZone.x;
         gameObject.y = dropZone.y;
+        // set zone to occupied
         dropZone.data.values.occupied = true;
+        // if cat has visited other zones, reset those zones
         if (gameObject.data.values.dropZones.length !== 0) {
           gameObject.data.values.dropZones.forEach(
             (zone) => (zone.data.values.occupied = false)
           );
         }
+        // add current zone to zone history
         gameObject.data.values.dropZones.push(dropZone);
         gameObject.data.values.soundOn = true;
+        // ensure cat only starts sound player once
         if (gameObject.data.values.dropZones.length <= 1) {
           gameObject.data.values.meow();
         }
-        console.log("meowsounds", gameObject.data.values.meowSounds);
-        console.log("gameobj", gameObject.data);
       } else {
         gameObject.x = gameObject.input.dragStartX;
         gameObject.y = gameObject.input.dragStartY;
